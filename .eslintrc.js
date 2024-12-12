@@ -5,6 +5,6 @@ module.exports = {
   rules: {
     'prettier/prettier': ['error', {}, { usePrettierrc: true }],
   },
-  ignorePatterns: ['/dist/*'],
+  ignorePatterns: ['/dist/*', 'expo-env.d.ts'],
   root: true,
 };
