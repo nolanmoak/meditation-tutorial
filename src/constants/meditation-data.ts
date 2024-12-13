@@ -1,3 +1,5 @@
+import { AVPlaybackSource } from 'expo-av';
+
 export interface MeditationType {
   id: number;
   title: string;
@@ -44,7 +46,7 @@ export const MEDITATION_DATA: MeditationType[] = [
   },
 ];
 
-export const AUDIO_FILES: { [key: string]: unknown } = {
+export const AUDIO_FILES: { [key: string]: AVPlaybackSource } = {
   'trees.mp3': require('#/assets/audio/trees.mp3'),
   'river.mp3': require('#/assets/audio/river.mp3'),
   'meditate-under-tree.mp3': require('#/assets/audio/meditate-under-tree.mp3'),

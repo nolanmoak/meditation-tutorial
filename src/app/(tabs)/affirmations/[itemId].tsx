@@ -40,7 +40,7 @@ const AffirmationPractice = () => {
       <ImageBackground source={affirmation?.image} resizeMode='cover' className='flex-1'>
         <AppGradient colors={['rgba(0, 0, 0, 0.3)', 'rgba(0, 0, 0, 0.9)']}>
           <View className='p-2'>
-            <Pressable className='' onPress={() => router.back()}>
+            <Pressable onPress={() => router.back()}>
               <AntDesign name='leftcircleo' size={50} color='white' />
             </Pressable>
             <ScrollView className='mt-20' showsVerticalScrollIndicator={false}>

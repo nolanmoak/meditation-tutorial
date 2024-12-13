@@ -24,7 +24,10 @@ const NatureMeditate = () => {
               keyExtractor={(item) => item.id.toString()}
               showsVerticalScrollIndicator={false}
               renderItem={({ item }) => (
-                <Pressable onPress={() => router.push('/meditate')} className='my-3 h-48 overflow-hidden rounded-md'>
+                <Pressable
+                  onPress={() => router.push(`/meditate/${item.id}`)}
+                  className='my-3 h-48 overflow-hidden rounded-md'
+                >
                   <ImageBackground
                     source={MEDITATION_IMAGES[item.id - 1]}
                     resizeMode='cover'
