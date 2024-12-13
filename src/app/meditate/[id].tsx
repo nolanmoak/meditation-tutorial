@@ -2,6 +2,7 @@ import AppGradient from '@/components/app-gradient';
 import CustomButton from '@/components/custom-button';
 import { AUDIO_FILES, MEDITATION_DATA } from '@/constants/meditation-data';
 import MEDITATION_IMAGES from '@/constants/meditiation-images';
+import { useTimer } from '@/context/timer-context';
 import { AntDesign } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -12,7 +13,8 @@ const Meditate = () => {
   const router = useRouter();
   const { id } = useLocalSearchParams();
 
-  const [secondsRemaining, setSecondsRemaining] = useState(10);
+  const { duration: secondsRemaining, setDuration } = useTimer();
+
   const [isMeditating, setIsMeditating] = useState(false);
   const [audioSound, setAudioSound] = useState<Audio.Sound>();
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
@@ -28,17 +30,17 @@ const Meditate = () => {
     }
 
     const timerId = setTimeout(() => {
-      setSecondsRemaining((current) => current - 1);
+      setDuration((current) => current - 1);
     }, 1000);
 
     return () => {
       clearTimeout(timerId);
     };
-  }, [secondsRemaining, isMeditating]);
+  }, [secondsRemaining, isMeditating, setDuration]);
 
   async function toggleMeditationSessionStatus() {
     if (secondsRemaining === 0) {
-      setSecondsRemaining(10);
+      setDuration(10);
     }
     setIsMeditating((current) => !current);
     await toggleSound();
@@ -46,9 +48,10 @@ const Meditate = () => {
 
   useEffect(() => {
     return () => {
+      setDuration(10);
       audioSound?.unloadAsync();
     };
-  }, [audioSound]);
+  }, [audioSound, setDuration]);
 
   async function initializeAudio() {
     const audioFilename = MEDITATION_DATA[Number(id) - 1].audio;
@@ -62,12 +65,14 @@ const Meditate = () => {
 
     const status = await sound?.getStatusAsync();
 
-    if (status.isLoaded && !isAudioPlaying) {
-      await sound.playAsync();
-      setIsAudioPlaying(true);
-    } else {
-      await sound.pauseAsync();
-      setIsAudioPlaying(false);
+    if (status.isLoaded) {
+      if (isAudioPlaying) {
+        await sound.pauseAsync();
+        setIsAudioPlaying(false);
+      } else {
+        await sound.playAsync();
+        setIsAudioPlaying(true);
+      }
     }
   }
 
@@ -85,7 +90,7 @@ const Meditate = () => {
     <View className='flex-1'>
       <ImageBackground source={MEDITATION_IMAGES[Number(id) - 1]} resizeMode='cover' className='flex-1'>
         <AppGradient colors={['transparent', 'rgba(0, 0, 0, 0.8)']}>
-          <View className='flex-1 p-2'>
+          <View className='flex-1 p-4'>
             <Pressable onPress={() => router.back()}>
               <AntDesign name='leftcircleo' size={50} color='white' />
             </Pressable>
@@ -98,7 +103,10 @@ const Meditate = () => {
             </View>
             <View className='flex flex-col gap-4'>
               <CustomButton title='Adjust Duration' onPress={handleAdjustMeditationDuration} />
-              <CustomButton title='Start Meditation' onPress={toggleMeditationSessionStatus} />
+              <CustomButton
+                title={isMeditating ? 'Stop' : 'Start Meditiation'}
+                onPress={toggleMeditationSessionStatus}
+              />
             </View>
           </View>
         </AppGradient>

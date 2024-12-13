@@ -1,3 +1,6 @@
+import JsStack from '@/components/js-stack';
+import TimerProvider from '@/context/timer-context';
+import { TransitionPresets } from '@react-navigation/stack';
 import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from 'expo-router';
 import { useEffect } from 'react';
@@ -24,14 +27,21 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack>
-      <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
-      <Stack.Screen name='index' options={{ headerShown: false }} />
-      <Stack.Screen name='meditate/[id]' options={{ headerShown: false }} />
-      <Stack.Screen
-        name='(modal)/adjust-meditation-duration'
-        options={{ headerShown: false, presentation: 'transparentModal' }}
-      />
-    </Stack>
+    <TimerProvider>
+      <JsStack>
+        <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
+        <Stack.Screen name='index' options={{ headerShown: false }} />
+        <Stack.Screen name='meditate/[id]' options={{ headerShown: false }} />
+        <JsStack.Screen
+          name='(modal)/adjust-meditation-duration'
+          options={{
+            ...TransitionPresets.ModalPresentationIOS,
+            headerShown: false,
+            presentation: 'modal',
+            gestureEnabled: true,
+          }}
+        />
+      </JsStack>
+    </TimerProvider>
   );
 }
